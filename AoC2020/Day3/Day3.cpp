@@ -7,6 +7,7 @@
 #include <vector>
 #include <filesystem>
 #include <cassert>
+#include <utility>
 
 int main()
 {
@@ -23,16 +24,35 @@ int main()
 		map.push_back(line);
 	}
 
-	int treesHit = 0;
-	size_t xPos = 0;
-
-	for (const std::string& mapRow : map)
+	std::vector<std::pair<int, int>> modes =
 	{
-		if (mapRow[xPos % mapRow.size()] == '#')
-			treesHit++;
+		{1, 1},
+		{3, 1},
+		{5, 1},
+		{7, 1},
+		{1, 2}
+	};
 
-		xPos += 3;
+	std::vector<std::uint64_t> treesHit(modes.size(), 0);
+
+	for (size_t row = 0; row < map.size(); row++)
+	{
+		std::string mapRow = map[row];
+		for (size_t modeId = 0; modeId < modes.size(); modeId++)
+		{
+			if (row % modes[modeId].second == 0 && mapRow[modes[modeId].first * row / modes[modeId].second % mapRow.size()] == '#')
+			{
+				treesHit[modeId]++;
+			}
+		}
 	}
 
-	std::cout << treesHit;
+	std::uint64_t product = 1;
+	for (auto hitCount : treesHit)
+	{
+		product *= hitCount;
+		std::cout << hitCount << std::endl;
+	}
+
+	std::cout << product << std::endl;
 }
