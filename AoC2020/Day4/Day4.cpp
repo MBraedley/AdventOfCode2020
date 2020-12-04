@@ -3,12 +3,14 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <filesystem>
 #include <cassert>
 #include <utility>
 #include <optional>
+#include <regex>
 
 /*
 byr (Birth Year)
@@ -63,33 +65,79 @@ Record ParseRecord(std::string record)
 	return ret;
 }
 
+std::optional<int> GetInt(std::string in)
+{
+	std::optional<int> ret = std::nullopt;
+
+	std::stringstream sstrm(in);
+	int out;
+	if (sstrm >> out)
+		ret = out;
+
+	return ret;
+}
+
 bool ValidateRecord(const Record& record)
 {
-	int byr = std::atoi(record.birthYear.value().c_str());
-	if (byr < 1920 || byr > 2002 || record.birthYear.value().size() != 4)
+	std::regex year("\\d{4}");
+	std::smatch m;
+
+	if (!record.birthYear.has_value() || !std::regex_match(record.birthYear.value(), m, year))
 		return false;
 
-	int iyr = std::atoi(record.issueYear.value().c_str());
-	if (iyr < 2010 || iyr > 2020 || record.issueYear.value().size() != 4)
+	auto byr = GetInt(record.birthYear.value());
+	if (!byr.has_value() || byr.value() < 1920 || byr.value() > 2002)
 		return false;
 
-	int eyr = std::atoi(record.expiryYear.value().c_str());
-	if (eyr < 2020 || eyr > 2030 || record.expiryYear.value().size() != 4)
+	if (!record.issueYear.has_value() || !std::regex_match(record.issueYear.value(), m, year))
 		return false;
 
-	std::string hgt = record.height.value();
-	bool cm = hgt.find("cm") != std::string::npos;
-	bool in = hgt.find("in") != std::string::npos;
-	if (cm == in)
+	auto iyr = GetInt(record.issueYear.value());
+	if (!iyr.has_value() || iyr.value() < 2010 || iyr.value() > 2020)
 		return false;
 
-	int hgtVal = std::atoi(hgt.c_str());
-	if (cm && (hgtVal < 150 || hgtVal > 193))
-		return false;
-	else if (in && (hgtVal < 59 || hgtVal > 76))
+	if (!record.expiryYear.has_value() || !std::regex_match(record.expiryYear.value(), m, year))
 		return false;
 
+	auto eyr = GetInt(record.expiryYear.value());
+	if (!eyr.has_value() || eyr.value() < 2020 || eyr.value() > 2030)
+		return false;
 
+	std::regex height("(\\d+)(cm|in)");
+
+	if (!record.height.has_value() || !std::regex_match(record.height.value(), m, height))
+		return false;
+
+	auto hgt = GetInt(m[1]);
+	if (!hgt.has_value())
+		return false;
+
+	if (m[2] == "cm")
+	{
+		if (hgt.value() < 150 || hgt.value() > 193)
+			return false;
+	}
+	else if(m[2] == "in")
+	{
+		if (hgt.value() < 59 || hgt.value() > 76)
+			return false;
+	}
+	else
+	{
+		return false;	//Something went really wrong
+	}
+
+	std::regex hair("#[0-9a-fA-F]{6}");
+	if (!record.hairColor.has_value() || !std::regex_match(record.hairColor.value(), m, hair))
+		return false;
+
+	std::regex eye("amb|blu|brn|gry|grn|hzl|oth");
+	if (!record.eyeColor.has_value() || !std::regex_match(record.eyeColor.value(), m, eye))
+		return false;
+
+	std::regex pid("\\d{9}");
+	if (!record.pid.has_value() || !std::regex_match(record.pid.value(), m, pid))
+		return false;
 
 
 	return true;
@@ -149,5 +197,5 @@ int main()
 		}
 	}
 
-	std::cout << count1 << std::endl;
+	std::cout << count1 << std::endl << count2 << std::endl;
 }
