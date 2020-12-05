@@ -8,23 +8,36 @@
 #include <vector>
 #include <filesystem>
 #include <cassert>
-#include <utility>
-#include <optional>
-#include <regex>
-#include <iostream>
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	std::filesystem::path inputFile("./input.txt");
+	assert(std::filesystem::exists(inputFile));
+
+	std::ifstream inputStrm(inputFile);
+	std::string line;
+	std::vector<std::uint16_t> seatIds;
+
+	while (std::getline(inputStrm, line))
+	{
+		std::uint16_t id = 0;
+		for (char c : line)
+		{
+			id = id << 1;
+			if (c == 'B' || c == 'R')
+			{
+				id += 1;
+			}
+		}
+		seatIds.push_back(id);
+	}
+
+	std::cout << *std::max_element(seatIds.begin(), seatIds.end()) << std::endl;
+
+	std::sort(seatIds.begin(), seatIds.end());
+	for ( size_t i = 0; i < seatIds.size() - 1; i++)
+	{
+		if (seatIds[i + 1] - seatIds[i] == 2)
+			std::cout << seatIds[i] + 1 << std::endl;
+	}
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
