@@ -39,30 +39,21 @@ int main()
 	}
 
 	int part1 = 0;
-
-	for (auto group : groupAns)
-	{
-		std::bitset<26> ans;
-		for (auto person : group)
-		{
-			ans |= person;
-		}
-
-		part1 += ans.count();
-	}
-
 	int part2 = 0;
 
 	for (auto group : groupAns)
 	{
-		std::bitset<26> ans;
-		ans.set();
+		std::bitset<26> ans1;
+		std::bitset<26> ans2;
+		ans2.set();
 		for (auto person : group)
 		{
-			ans &= person;
+			ans1 |= person;
+			ans2 &= person;
 		}
 
-		part2 += ans.count();
+		part1 += ans1.count();
+		part2 += ans2.count();
 	}
 
 	std::cout << part1 << std::endl << part2 << std::endl;
