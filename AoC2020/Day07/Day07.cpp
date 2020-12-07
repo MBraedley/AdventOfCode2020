@@ -8,17 +8,20 @@
 #include <regex>
 #include <vector>
 #include <set>
-#include <unordered_map>
+#include <map>
 #include <cassert>
 
-std::set<std::string> SearchForContainers(const std::string& target, const std::unordered_map<std::string, std::string>& rules)
+using Contents = std::map<std::string, std::uint32_t>;
+using Rules = std::map<std::string, Contents>;
+
+std::set<std::string> SearchForContainers(const std::string& target, const Rules& rules)
 {
 	std::set<std::string> ret;
 
 	for (auto rule : rules)
 	{
-		std::string contents = rule.second;
-		if (contents.find(target) != contents.npos)
+		Contents contents = rule.second;
+		if (contents.find(target) != contents.end())
 		{
 			ret.insert(rule.first);
 			ret.merge(SearchForContainers(rule.first, rules));
@@ -36,28 +39,17 @@ int GetInt(const std::string& in)
 	return out;
 }
 
-std::uint64_t GetContentCount(const std::string& container, const std::unordered_map<std::string, std::string>& rules, std::unordered_map<std::string, std::uint64_t> totalBags)
+std::uint32_t GetContentCount(const std::string& container, const Rules& rules)
 {
-	std::uint64_t count = 0;
-	std::regex search("(\\d+) ([a-z]+ [a-z]+) bag[s]?");
-	std::smatch m;
+	std::uint32_t count = 0;
 
-	assert(rules.find(container) != rules.end());
-	std::string contents = rules.at(container);
-	while (std::regex_search(contents, m, search))
+	if (auto rule = rules.find(container); rule != rules.end())
 	{
-		int bagCount = GetInt(m[1]);
-		std::uint64_t containedBags = 0;
-		if (totalBags.find(m[2]) != totalBags.end())
+		Contents contents = rule->second;
+		for (auto bagRule : contents)
 		{
-			containedBags = totalBags[m[2]];
+			count += bagRule.second + bagRule.second * GetContentCount(bagRule.first, rules);
 		}
-		else
-		{
-			containedBags = GetContentCount(m[2], rules, totalBags);
-			totalBags[m[2]] = containedBags;
-		}
-		count += bagCount + bagCount * containedBags;
 	}
 
 	return count;
@@ -71,14 +63,23 @@ int main()
 	std::ifstream inputStrm(inputFile);
 
 	std::string line;
-	std::unordered_map<std::string, std::string> rules;
+	Rules rules;
+
+	std::regex ruleRegex("([a-z]+ [a-z]+) bags contain (.+)");
+	std::regex contentRegex("(\\d+) ([a-z]+ [a-z]+)?");
+	std::smatch m1, m2;
 
 	while (std::getline(inputStrm, line))
 	{
-		std::regex parser("([a-z]+ [a-z]+) bags contain (.+)");
-		std::smatch m;
-		assert(std::regex_match(line, m, parser));
-		rules.emplace(m[1], m[2]);
+		assert(std::regex_match(line, m1, ruleRegex));
+		std::string contentStr = m1[2];
+		Contents bags;
+		while (std::regex_search(contentStr, m2, contentRegex))
+		{
+			bags.emplace(m2[2], GetInt(m2[1]));
+			contentStr = m2.suffix();
+		}
+		rules.emplace(m1[1], bags);
 	}
 
 	std::string targetBag = "shiny gold";
@@ -86,8 +87,7 @@ int main()
 
 	std::cout << containers.size() << std::endl;
 
-	std::unordered_map<std::string, std::uint64_t> totalBags;
-	auto contained = GetContentCount(targetBag, rules, totalBags);
+	auto contained = GetContentCount(targetBag, rules);
 
 	std::cout << contained << std::endl;
 }
