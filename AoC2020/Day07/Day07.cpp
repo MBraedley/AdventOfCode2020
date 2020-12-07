@@ -58,6 +58,7 @@ std::uint64_t GetContentCount(const std::string& container, const std::unordered
 			totalBags[m[2]] = containedBags;
 		}
 		count += bagCount + bagCount * containedBags;
+		contents = m.suffix();
 	}
 
 	return count;
