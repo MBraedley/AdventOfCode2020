@@ -13,6 +13,11 @@ enum class Operation
 
 struct Instruction
 {
+	Instruction(Operation _op, std::int64_t _value) :
+		op(_op),
+		value(_value)
+	{}
+
 	Operation op;
 	std::int64_t value;
 };
@@ -27,7 +32,8 @@ public:
 
 	void HaltOnLoop(bool enable) { m_HaltOnLoop = enable; }
 
-	void Run();
+	bool Run();
+	void Debug();
 
 	std::int64_t GetAccumulator() { return m_Acc; }
 
@@ -40,4 +46,5 @@ private:
 	std::set<std::size_t> m_LoopDetector;
 	bool m_HaltOnLoop = false;
 	bool m_Halted = false;
+	bool m_NormalHalt = false;
 };

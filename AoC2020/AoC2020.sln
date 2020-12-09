@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Day07", "Day07\Day07.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HandheldConsole", "HandheldConsole\HandheldConsole.vcxproj", "{960BFE0F-C9D9-46C9-997E-B98C6F136852}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Day08", "Day08\Day08.vcxproj", "{21D4A362-48C7-4EED-9D59-FE43E5B64F2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -57,6 +59,10 @@ Global
 		{960BFE0F-C9D9-46C9-997E-B98C6F136852}.Debug|x64.Build.0 = Debug|x64
 		{960BFE0F-C9D9-46C9-997E-B98C6F136852}.Release|x64.ActiveCfg = Release|x64
 		{960BFE0F-C9D9-46C9-997E-B98C6F136852}.Release|x64.Build.0 = Release|x64
+		{21D4A362-48C7-4EED-9D59-FE43E5B64F2C}.Debug|x64.ActiveCfg = Debug|x64
+		{21D4A362-48C7-4EED-9D59-FE43E5B64F2C}.Debug|x64.Build.0 = Debug|x64
+		{21D4A362-48C7-4EED-9D59-FE43E5B64F2C}.Release|x64.ActiveCfg = Release|x64
+		{21D4A362-48C7-4EED-9D59-FE43E5B64F2C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
