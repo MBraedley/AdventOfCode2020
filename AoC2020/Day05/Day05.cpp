@@ -34,6 +34,7 @@ int main()
 
 	std::cout << *std::max_element(seatIds.begin(), seatIds.end()) << std::endl;
 
+	// Part 2
 	std::sort(seatIds.begin(), seatIds.end());
 	for ( size_t i = 0; i < seatIds.size() - 1; i++)
 	{
