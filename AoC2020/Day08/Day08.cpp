@@ -15,6 +15,8 @@ int main()
 	std::cout << console.GetAccumulator() << std::endl;
 
 	//part 2
+	// This vector was manually generated based on my input.
+	// TODO generate this vector automatically, maybe from the debug output or a new method in HandheldConsole
 	std::vector<std::size_t> possiblyCorrupted = {
 		3, 367, 520, 464, 277, 186, 187, 174, 176, 552, 544, 546, 432,
 		326, 436, 371, 86, 362, 625, 626, 137, 230, 129, 130, 270, 581,
