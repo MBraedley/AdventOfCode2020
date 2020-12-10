@@ -35,6 +35,7 @@ int main()
 
 	std::cout << std::count(diffs.begin(), diffs.end(), 1) * std::count(diffs.begin(), diffs.end(), 3) << std::endl;
 
+	// Part 2
 	int optCount = 0;
 
 	for (std::size_t i = 0; i < diffs.size() - 1; i++)
