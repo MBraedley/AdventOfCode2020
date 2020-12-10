@@ -45,7 +45,7 @@ int main()
 		}
 	}
 
-	std::uint64_t options = std::uint64_t(1) << optCount;
+	int runCount = 0;
 
 	std::vector<std::uint32_t> query = { 1, 1, 1, 1 };
 
@@ -53,10 +53,12 @@ int main()
 	auto findIt = std::search(searchStart, diffs.end(), query.begin(), query.end());
 	while (findIt != diffs.end())
 	{
-		options--;
+		optCount -= 3;
+		runCount++;
 		searchStart = findIt + 1;
 		findIt = std::search(searchStart, diffs.end(), query.begin(), query.end());
 	}
-
+	
+	std::uint64_t options = std::pow(2, optCount) * std::pow(7, runCount);
 	std::cout << options <<std::endl;
 }
