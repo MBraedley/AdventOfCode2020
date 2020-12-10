@@ -78,7 +78,8 @@ int main()
 		buffer.push_back(testList.front());
 		testList.pop_front();
 	}
-
+	
+	// Part 2
 	const std::uint64_t testVal = testList.front();
 
 	auto range = FindSumBlock(fullList, testVal);
