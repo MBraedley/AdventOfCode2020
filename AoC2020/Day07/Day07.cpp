@@ -87,6 +87,7 @@ int main()
 
 	std::cout << containers.size() << std::endl;
 
+	// Part 2
 	std::unordered_map<std::string, std::uint64_t> totalBags;
 	auto contained = GetContentCount(targetBag, rules, totalBags);
 
