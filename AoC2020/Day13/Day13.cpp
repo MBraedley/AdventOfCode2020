@@ -62,17 +62,17 @@ int main()
 
 	std::sort(busRemainders.rbegin(), busRemainders.rend());
 
-	std::uint64_t result = busRemainders.front().second;
+	std::uint64_t result = busRemainders.front().first - busRemainders.front().second;
 	std::uint64_t n = 1;
 	for (std::uint64_t i = 0; i < busRemainders.size() - 1; i++)
 	{
 		auto prev = busRemainders[i];
 		auto next = busRemainders[i + 1];
-		while (result % next.first != next.second)
+		while ((result + next.second) % next.first != 0)
 		{
 			result += n * prev.first;
 		}
-		assert(result % prev.first == prev.second);
+		assert((result + prev.second) % prev.first == 0);
 		n *= prev.first;
 	}
 
