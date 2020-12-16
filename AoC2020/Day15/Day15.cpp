@@ -4,56 +4,50 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include <optional>
 #include <cassert>
 
 int main()
 {
 	std::vector<std::uint64_t> input = { 9,12,1,4,17,0,18 };
-	input.reserve(2020);
 
-	std::unordered_map<std::uint64_t, std::vector<std::uint64_t>> positions;
-	for (std::size_t i = 0; i < input.size(); i++)
+	std::unordered_map<std::uint64_t, std::pair<std::optional<std::uint64_t>, std::uint64_t>> positions;
+	for (std::uint64_t i = 0; i < input.size(); i++)
 	{
-		positions[input[i]].push_back(i);
+		positions[input[i]] = std::make_pair<std::optional<std::uint64_t>, std::uint64_t>(std::nullopt, i + 1);
 	}
 
-	while (input.size() < 2020)
+	std::uint64_t numTurns = input.size();
+	std::uint64_t lastVal = input.back();
+	while (numTurns < 30000000)
 	{
-		if (positions[input.back()].size() == 1)
+		numTurns++;
+		if (!positions[lastVal].first.has_value())
 		{
-			positions[0].push_back(input.size());
-			input.push_back(0);
+			lastVal = 0;
+			positions[0].first = positions[0].second;
+			positions[0].second = numTurns;
 		}
 		else
 		{
-			assert(positions[input.back()].size() != 0);
-			auto posVec = positions[input.back()];
-			auto prevPos = posVec[posVec.size() - 2];
-			auto nextVal = input.size() - prevPos - 1;
-			positions[nextVal].push_back(input.size());
-			input.push_back(nextVal);
+			auto nextVal = positions[lastVal].second - positions[lastVal].first.value();
+			if (positions.find(nextVal) != positions.end())
+			{
+				positions[nextVal].first = positions[nextVal].second;
+			}
+			else
+			{
+				positions[nextVal].first = std::nullopt;
+			}
+			positions[nextVal].second = numTurns;
+			lastVal = nextVal;
+		}
+
+		if (numTurns == 2020)
+		{
+			std::cout << lastVal << std::endl;
 		}
 	}
 
-	std::cout << input.back() << std::endl;
-
-	while (input.size() < 30000000)
-	{
-		if (positions[input.back()].size() == 1)
-		{
-			positions[0].push_back(input.size());
-			input.push_back(0);
-		}
-		else
-		{
-			assert(positions[input.back()].size() != 0);
-			auto posVec = positions[input.back()];
-			auto prevPos = posVec[posVec.size() - 2];
-			auto nextVal = input.size() - prevPos - 1;
-			positions[nextVal].push_back(input.size());
-			input.push_back(nextVal);
-		}
-	}
-
-	std::cout << input.back() << std::endl;
+	std::cout << lastVal << std::endl;
 }
