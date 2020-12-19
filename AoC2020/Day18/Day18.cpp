@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <queue>
 #include <filesystem>
 #include <cassert>
 
@@ -18,8 +19,9 @@ enum class Operation
 std::uint64_t Evaluate(const std::string& equation, std::string::iterator& pos)
 {
 	std::uint64_t val = 0;
+	std::queue<std::uint64_t> awaitingMulti;
 	Operation op = Operation::ADD;
-	
+
 	while (pos != equation.end())
 	{
 		if (*pos == ' ')
@@ -35,12 +37,18 @@ std::uint64_t Evaluate(const std::string& equation, std::string::iterator& pos)
 			}
 			else
 			{
-				val *= Evaluate(equation, pos);
+				awaitingMulti.push(val);
+				val = Evaluate(equation, pos);
 			}
 		}
 		else if (*pos == ')')
 		{
 			pos++;
+			while (!awaitingMulti.empty())
+			{
+				val *= awaitingMulti.front();
+				awaitingMulti.pop();
+			}
 			return val;
 		}
 		else if (*pos == '+')
@@ -61,16 +69,18 @@ std::uint64_t Evaluate(const std::string& equation, std::string::iterator& pos)
 			}
 			else
 			{
-				val *= Evaluate(equation, pos);
+				awaitingMulti.push(val);
+				val = (static_cast<std::uint64_t>(*pos) - '0');
 			}
-
-			if (pos != equation.end())
-			{
-				pos++;
-			}
+			pos++;
 		}
 	}
 
+	while (!awaitingMulti.empty())
+	{
+		val *= awaitingMulti.front();
+		awaitingMulti.pop();
+	}
 	return val;
 }
 
@@ -88,8 +98,13 @@ int main()
 	{
 		equations.push_back(line);
 		auto pos = line.begin();
-		sum += Evaluate(line, pos);
+		auto value = Evaluate(line, pos);
+		sum += value;
+		std::cout.width(20);
+		std::cout << value << std::endl;
 	}
 
+	std::cout << "____________________" << std::endl;
+	std::cout.width(20);
 	std::cout << sum << std::endl;
 }
