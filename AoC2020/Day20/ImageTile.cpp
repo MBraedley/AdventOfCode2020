@@ -6,8 +6,8 @@ ImageTile::ImageTile(std::uint32_t tileId, std::vector<std::string> imageData) :
 	m_TileId(tileId),
 	m_ImageData(imageData)
 {
-	m_Sides.insert(m_ImageData.front());
-	m_Sides.insert(m_ImageData.back());
+	m_Sides.emplace(ImageSide::TOP, m_ImageData.front());
+	m_Sides.emplace(ImageSide::BOTTOM, m_ImageData.back());
 
 	std::string left, right;
 	for (auto row : m_ImageData)
@@ -16,8 +16,8 @@ ImageTile::ImageTile(std::uint32_t tileId, std::vector<std::string> imageData) :
 		right.push_back(row.back());
 	}
 
-	m_Sides.insert(left);
-	m_Sides.insert(right);
+	m_Sides.emplace(ImageSide::LEFT, left);
+	m_Sides.emplace(ImageSide::RIGHT, right);
 }
 
 bool ImageTile::SharesSide(ImageTile& other)
@@ -27,16 +27,16 @@ bool ImageTile::SharesSide(ImageTile& other)
 	{
 		for (auto theirSide : other.m_Sides)
 		{
-			if (mySide == theirSide || ReverseString(mySide) == theirSide)
+			if (mySide.second == theirSide.second || ReverseString(mySide.second) == theirSide.second)
 			{
 				assert(!ret);
 				ret = true;
 
-				assert(m_SharedSides.find(mySide) == m_SharedSides.end());
-				m_SharedSides.emplace(mySide, other.GetTileId());
+				assert(m_SharedSides.find(mySide.first) == m_SharedSides.end());
+				m_SharedSides.emplace(mySide.first, other.GetTileId());
 
-				assert(other.m_SharedSides.find(theirSide) == other.m_SharedSides.end());
-				other.m_SharedSides.emplace(theirSide, m_TileId);
+				assert(other.m_SharedSides.find(theirSide.first) == other.m_SharedSides.end());
+				other.m_SharedSides.emplace(theirSide.first, m_TileId);
 			}
 		}
 	}

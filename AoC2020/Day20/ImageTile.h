@@ -7,6 +7,14 @@
 class ImageTile
 {
 public:
+	enum class ImageSide
+	{
+		TOP,
+		RIGHT,
+		BOTTOM,
+		LEFT,
+	};
+
 	ImageTile(std::uint32_t tileId, std::vector<std::string> imageData);
 	~ImageTile() = default;
 
@@ -23,8 +31,8 @@ private:
 	}
 
 	std::vector<std::string> m_ImageData;
-	std::unordered_set<std::string> m_Sides;
+	std::unordered_map<ImageSide, std::string> m_Sides;
 	std::uint32_t m_TileId;
 
-	std::unordered_multimap<std::string, std::uint32_t> m_SharedSides;
+	std::unordered_multimap<ImageSide, std::uint32_t> m_SharedSides;
 };
