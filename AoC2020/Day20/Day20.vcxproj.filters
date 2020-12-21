@@ -21,9 +21,15 @@
     <ClCompile Include="ImageTile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FullImage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImageTile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FullImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,6 +2,7 @@
 //
 
 #include "ImageTile.h"
+#include "FullImage.h"
 
 #include <iostream>
 #include <fstream>
@@ -36,23 +37,12 @@ int main()
 		tiles.emplace_back(id, image);
 	}
 
-	for (std::size_t i = 0; i < tiles.size() - 1; i++)
-	{
-		for (std::size_t j = i + 1; j < tiles.size(); j++)
-		{
-			tiles[i].SharesSide(tiles[j]);
-		}
-	}
+	FullImage image(tiles);
 
 	std::uint64_t product = 1;
-	for (const auto& tile : tiles)
+	for (auto id : image.GetCornerIds())
 	{
-		auto sideCount = tile.GetSharedSideCount();
-		assert(sideCount >= 2 && sideCount <= 4);
-		if (sideCount == 2)
-		{
-			product *= tile.GetTileId();
-		}
+		product *= id;
 	}
 
 	std::cout << product << std::endl;

@@ -6,6 +6,7 @@
 
 class ImageTile
 {
+	friend class FullImage;
 public:
 	enum class ImageSide
 	{
@@ -34,5 +35,5 @@ private:
 	std::unordered_map<ImageSide, std::string> m_Sides;
 	std::uint32_t m_TileId;
 
-	std::unordered_multimap<ImageSide, std::uint32_t> m_SharedSides;
+	std::unordered_map<ImageSide, std::uint32_t> m_SharedSides;
 };

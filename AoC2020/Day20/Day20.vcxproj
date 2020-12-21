@@ -81,9 +81,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Day20.cpp" />
+    <ClCompile Include="FullImage.cpp" />
     <ClCompile Include="ImageTile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FullImage.h" />
     <ClInclude Include="ImageTile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
