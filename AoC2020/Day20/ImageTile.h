@@ -25,7 +25,7 @@ public:
 	std::size_t GetSharedSideCount() const { return m_SharedSides.size(); }
 
 private:
-	std::string ReverseString(const std::string& str)
+	static std::string ReverseString(const std::string& str)
 	{
 		std::string ret(str.rbegin(), str.rend());
 		return ret;

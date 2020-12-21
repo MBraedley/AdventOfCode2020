@@ -1,5 +1,8 @@
 #include "FullImage.h"
 
+#include <iostream>
+#include <sstream>
+#include <regex>
 #include <cassert>
 
 FullImage::FullImage(const std::vector<ImageTile>& tiles) :
@@ -7,6 +10,50 @@ FullImage::FullImage(const std::vector<ImageTile>& tiles) :
 {
 	InitializeTileGrid();
 	InitializeCompletedImage();
+}
+
+std::uint32_t FullImage::GetSeaRoughness()
+{
+	assert(!m_CompletedImage.empty());
+	assert(m_CompletedImage.size() == m_CompletedImage.front().size());
+	std::stringstream seaMonsterSstrm;
+	seaMonsterSstrm << m_SeaMonster[0] << ".{" << m_CompletedImage.size() - m_SeaMonster[0].size() << "}"
+		<< m_SeaMonster[1] << ".{" << m_CompletedImage.size() - m_SeaMonster[0].size() << "}"
+		<< m_SeaMonster[2];
+
+	std::regex seaMonsterRegex(seaMonsterSstrm.str());
+	std::smatch m;
+
+	auto searchableImages = GetSearchableImages();
+	for (auto image : searchableImages)
+	{
+		std::uint32_t seaMonsterCount = 0;
+		std::string searchedImage = image;
+		while (std::regex_search(searchedImage, m, seaMonsterRegex))
+		{
+			std::cout << "Monster Found!" << std::endl;
+			seaMonsterCount++;
+			searchedImage = searchedImage.substr(m.prefix().length() + 1);
+		}
+
+		if (seaMonsterCount > 0)
+		{
+			return GetTotalActivePixels() - seaMonsterCount * m_NumSeaMonsterPixels;
+		}
+	}
+
+	return GetTotalActivePixels();
+}
+
+std::uint32_t FullImage::GetTotalActivePixels()
+{
+	std::uint32_t count = 0;
+	for (auto row : m_CompletedImage)
+	{
+		count += std::count(row.begin(), row.end(), '#');
+	}
+
+	return count;
 }
 
 void FullImage::InitializeTileGrid()
@@ -100,9 +147,25 @@ void FullImage::InitializeCompletedImage()
 			nextTile = FlipHorizontal(nextTile);
 		}
 
-		m_TileGrid.emplace(std::make_pair<std::uint32_t, std::uint32_t>(std::uint32_t(x), std::uint32_t(y)), nextTile);
+		m_TileGrid.emplace(std::make_pair(std::uint32_t(x), std::uint32_t(y)), nextTile);
 		x++;
 		currentTile = nextTile;
+	}
+
+	std::uint32_t tileHeight = currentTile.m_ImageData.size();
+	std::uint32_t tileWidth = currentTile.m_ImageData.front().size();
+
+	for (std::uint32_t yTile = 0; yTile < 12; yTile++)
+	{
+		for (std::uint32_t tileRow = 1; tileRow < tileHeight - 1; tileRow++)
+		{
+			std::string row;
+			for (std::uint32_t xTile = 0; xTile < 12; xTile++)
+			{
+				row += m_TileGrid.at(std::make_pair(std::uint32_t(xTile), std::uint32_t(yTile))).m_ImageData[tileRow].substr(1, tileWidth - 2);
+			}
+			m_CompletedImage.push_back(row);
+		}
 	}
 }
 
@@ -111,7 +174,7 @@ ImageTile FullImage::FlipHorizontal(ImageTile in)
 	std::vector<std::string> flippedData;
 	for (auto row : in.m_ImageData)
 	{
-		flippedData.push_back(in.ReverseString(row));
+		flippedData.push_back(ImageTile::ReverseString(row));
 	}
 
 	ImageTile out(in.m_TileId, flippedData);
@@ -243,3 +306,67 @@ ImageTile FullImage::RotateLeft(ImageTile in)
 
 	return out;
 }
+
+std::vector<std::string> FullImage::GetSearchableImages()
+{
+	std::vector<std::string> ret;
+
+	std::string searchable;
+	// Current orientation
+	for (auto row : m_CompletedImage)
+	{
+		searchable += row;
+	}
+	ret.push_back(searchable);
+
+	// Rotate 180°
+	ret.push_back(ImageTile::ReverseString(searchable));
+
+	// Flip horizontal
+	searchable.clear();
+	for (auto row : m_CompletedImage)
+	{
+		searchable += ImageTile::ReverseString(row);
+	}
+	ret.push_back(searchable);
+
+	// Rotate 180°, covers flip vertical
+	ret.push_back(ImageTile::ReverseString(searchable));
+
+	// Rotate by 90° and do the 4 above operations
+	std::vector<std::string> rotatedData;
+	rotatedData.resize(m_CompletedImage.front().size());
+
+	for (auto row = m_CompletedImage.rbegin(); row != m_CompletedImage.rend(); row++)
+	{
+		for (std::size_t j = 0; j < m_CompletedImage.front().size(); j++)
+		{
+			rotatedData[j].push_back(row->at(j));
+		}
+	}
+
+	// Current orientation
+	searchable.clear();
+	for (auto row : rotatedData)
+	{
+		searchable += row;
+	}
+	ret.push_back(searchable);
+
+	// Rotate 180°
+	ret.push_back(ImageTile::ReverseString(searchable));
+
+	// Flip horizontal
+	searchable.clear();
+	for (auto row : rotatedData)
+	{
+		searchable += ImageTile::ReverseString(row);
+	}
+	ret.push_back(searchable);
+
+	// Rotate 180°, covers flip vertical
+	ret.push_back(ImageTile::ReverseString(searchable));
+
+	return ret;
+}
+

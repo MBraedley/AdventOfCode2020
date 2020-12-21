@@ -46,4 +46,7 @@ int main()
 	}
 
 	std::cout << product << std::endl;
+
+	// Part 2
+	std::cout << image.GetTotalActivePixels() << std::endl << image.GetSeaRoughness() << std::endl;
 }
