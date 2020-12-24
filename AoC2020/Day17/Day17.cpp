@@ -10,9 +10,9 @@
 #include <filesystem>
 #include <cassert>
 
-struct Pos4D
+struct Pos3D
 {
-	Pos4D(std::int64_t _x, std::int64_t _y, std::int64_t _z, std::int64_t _w) : x(_x), y(_y), z(_z), w(_w) {};
+	Pos3D(std::int64_t _x, std::int64_t _y, std::int64_t _z, std::int64_t _w) : x(_x), y(_y), z(_z), w(_w) {};
 
 	std::int64_t x;
 	std::int64_t y;
@@ -22,9 +22,9 @@ struct Pos4D
 
 namespace std
 {
-	template<> struct hash<Pos4D>
+	template<> struct hash<Pos3D>
 	{
-		std::size_t operator()(Pos4D const& pos) const noexcept
+		std::size_t operator()(Pos3D const& pos) const noexcept
 		{
 			std::size_t hx = std::hash<std::uint64_t>{}(pos.x);
 			std::size_t hy = std::hash<std::uint64_t>{}(pos.y);
@@ -35,19 +35,19 @@ namespace std
 	};
 }
 
-bool operator==(const Pos4D& lhs, const Pos4D rhs)
+bool operator==(const Pos3D& lhs, const Pos3D rhs)
 {
 	return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;
 }
 
-bool operator!=(const Pos4D& lhs, const Pos4D rhs)
+bool operator!=(const Pos3D& lhs, const Pos3D rhs)
 {
 	return !(lhs == rhs);
 }
 
-std::unordered_set<Pos4D> GetNeigbours(const Pos4D& pos)
+std::unordered_set<Pos3D> GetNeigbours(const Pos3D& pos)
 {
-	std::unordered_set<Pos4D> ret;
+	std::unordered_set<Pos3D> ret;
 	for (std::int64_t x : { pos.x - 1, pos.x, pos.x + 1})
 	{
 		for (std::int64_t y : { pos.y - 1, pos.y, pos.y + 1})
@@ -65,9 +65,9 @@ std::unordered_set<Pos4D> GetNeigbours(const Pos4D& pos)
 	return ret;
 }
 
-std::unordered_set<Pos4D> GetTestPositions(const std::unordered_set<Pos4D>& map)
+std::unordered_set<Pos3D> GetTestPositions(const std::unordered_set<Pos3D>& map)
 {
-	std::unordered_set<Pos4D> ret;
+	std::unordered_set<Pos3D> ret;
 	for (const auto& pos : map)
 	{
 		ret.merge(GetNeigbours(pos));
@@ -75,7 +75,7 @@ std::unordered_set<Pos4D> GetTestPositions(const std::unordered_set<Pos4D>& map)
 	return ret;
 }
 
-std::uint32_t CountNeighbours(const Pos4D& pos, const std::unordered_set<Pos4D>& map)
+std::uint32_t CountNeighbours(const Pos3D& pos, const std::unordered_set<Pos3D>& map)
 {
 	std::uint32_t count = 0;
 	for (const auto& testPos : GetNeigbours(pos))
@@ -88,7 +88,7 @@ std::uint32_t CountNeighbours(const Pos4D& pos, const std::unordered_set<Pos4D>&
 	return count;
 }
 
-bool TestPosition(const Pos4D& pos, const std::unordered_set<Pos4D>& map)
+bool TestPosition(const Pos3D& pos, const std::unordered_set<Pos3D>& map)
 {
 	std::uint32_t count = CountNeighbours(pos, map);
 	if (map.find(pos) != map.end())	//Currently alive
@@ -101,7 +101,7 @@ bool TestPosition(const Pos4D& pos, const std::unordered_set<Pos4D>& map)
 	}
 }
 
-void GetNextGen(const std::unordered_set<Pos4D>& map, std::unordered_set<Pos4D>& nextGen)
+void GetNextGen(const std::unordered_set<Pos3D>& map, std::unordered_set<Pos3D>& nextGen)
 {
 	nextGen.clear();
 	auto posToTest = GetTestPositions(map);
@@ -123,7 +123,7 @@ int main()
 	std::string line;
 	std::vector<std::string> initialMap;
 
-	std::unordered_set<Pos4D> map;
+	std::unordered_set<Pos3D> map;
 
 	while (std::getline(inputStrm, line))
 	{
@@ -141,7 +141,7 @@ int main()
 		}
 	}
 
-	std::unordered_set<Pos4D> nextGen;
+	std::unordered_set<Pos3D> nextGen;
 	for (int cycles = 0; cycles < 6; cycles++)
 	{
 		GetNextGen(map, nextGen);
