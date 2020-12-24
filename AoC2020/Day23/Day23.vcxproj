@@ -12,9 +12,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{21d4a362-48c7-4eed-9d59-fe43e5b64f2c}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Day08</RootNamespace>
+    <ProjectGuid>{fcbf3d3e-b8f4-459e-9ce2-095af95a23b6}</ProjectGuid>
+    <RootNamespace>Day23</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -39,12 +39,10 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\AoC2020.props" />
-    <Import Project="..\HandheldConsole\HandheldConsole.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\AoC2020.props" />
-    <Import Project="..\HandheldConsole\HandheldConsole.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -82,12 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Day08.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HandheldConsole\HandheldConsole.vcxproj">
-      <Project>{960bfe0f-c9d9-46c9-997e-b98c6f136852}</Project>
-    </ProjectReference>
+    <ClCompile Include="Day23.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
