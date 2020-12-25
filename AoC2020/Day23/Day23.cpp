@@ -73,17 +73,65 @@ int main()
 	PrintCups(cups);
 
 	//Part 2
-	cups = { 3,6,2,9,8,1,7,5,4 };
-	maxVal = 1000000;
-	for (std::uint32_t i = cups.size() + 1; i <= maxVal; i++)
+	//cups = { 3,6,2,9,8,1,7,5,4 };
+	//maxVal = 1000000;
+	//for (std::uint32_t i = cups.size() + 1; i <= maxVal; i++)
+	//{
+	//	cups.push_back(i);
+	//}
+
+	//RunGame(cups, 10'000'000, maxVal);
+
+	//auto iter = std::find(cups.begin(), cups.end(), 1);
+	//std::uint32_t next1 = *(iter + 1);
+	//std::uint32_t next2 = *(iter + 2);
+	//std::cout << next1 * next2 << std::endl;
+
+	std::vector<std::uint32_t> input = { 3,6,2,9,8,1,7,5,4 };
+	input.reserve(1000000);
+	for (std::uint32_t i = 10; i <= 1000000; i++)
 	{
-		cups.push_back(i);
+		input.push_back(i);
 	}
 
-	RunGame(cups, 10'000'000, maxVal);
+	std::vector<std::uint32_t> cupsP2(1000001);
+	cupsP2[0] = input[0];
+	for (std::uint32_t i = 1; i < input.size(); i++)
+	{
+		cupsP2[input[i - 1]] = input[i];
+	}
 
-	auto iter = std::find(cups.begin(), cups.end(), 1);
-	std::uint32_t next1 = *(iter + 1);
-	std::uint32_t next2 = *(iter + 2);
-	std::cout << next1 * next2 << std::endl;
+	cupsP2[input.size()] = input[0];
+
+	for (std::uint32_t i = 0; i < 10000000; i++)
+	{
+		std::uint32_t current = cupsP2[0];
+		std::uint32_t c1 = cupsP2[current];
+		std::uint32_t c2 = cupsP2[c1];
+		std::uint32_t c3 = cupsP2[c2];
+		std::uint32_t next = cupsP2[c3];
+
+		std::uint32_t dest = current - 1;
+		if (dest == 0)
+		{
+			dest = 1000000;
+		}
+		while (dest == c1 || dest == c2 || dest == c3)
+		{
+			dest--;
+			if (dest == 0)
+			{
+				dest = 1000000;
+			}
+		}
+
+		cupsP2[c3] = cupsP2[dest];
+		cupsP2[dest] = c1;
+		cupsP2[current] = next;
+		cupsP2[0] = next;
+	}
+
+	std::uint64_t ans = static_cast<std::uint64_t>(cupsP2[1]) * static_cast<std::uint64_t>(cupsP2[cupsP2[1]]);
+
+	std::cout << ans << std::endl;
 }
